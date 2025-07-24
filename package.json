@@ -1,0 +1,19 @@
+{
+  "name": "com.leosclockworks.localegenerator",
+  "version": "1.0.7",
+  "displayName": "Locale Generator",
+  "description": "Generates compile time localization classes",
+  "keywords": [
+    "Localization"
+  ],
+  "author": {
+    "name": "Mercury Finnegan",
+    "email": "Kansamas@gmail.com",
+    "url": "https://mercury-leo.github.io/"
+  },
+  "unity": "2019.1",
+  "dependencies": {
+    "com.unity.addressables": "1.19.19",
+    "com.unity.localization": "1.5.5"
+  }
+}
