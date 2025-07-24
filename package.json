@@ -1,6 +1,6 @@
 {
   "name": "com.leosclockworks.localegenerator",
-  "version": "1.0.7",
+  "version": "1.0.0",
   "displayName": "Locale Generator",
   "description": "Generates compile time localization classes",
   "keywords": [
