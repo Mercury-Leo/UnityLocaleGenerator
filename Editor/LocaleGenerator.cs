@@ -26,7 +26,7 @@ namespace LocaleGenerator.Editor
             LocalizationEditorSettings.EditorEvents.TableEntryRemoved += OnTableModified;
         }
 
-        [MenuItem("Tools/LocaleGenerator/Generate")]
+        [MenuItem("Tools/Leo's Tools/Generate Locale")]
         public static void GenerateLocaleClasses()
         {
             var output = Path.Combine(LocaleSettings.instance.TargetFolder, LocaleClassesName);
