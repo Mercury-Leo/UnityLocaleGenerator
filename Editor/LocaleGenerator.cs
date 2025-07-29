@@ -81,12 +81,13 @@ namespace LocaleGenerator.Editor
             builder.WriteLine("using UnityEngine.Localization;");
             builder.WriteLine("using System.Diagnostics.Contracts;");
             builder.WriteLine("using System.Collections.Generic;");
+            builder.WriteLine("using System.Linq;");
         }
 
         private static void BuildClass(IndentedTextWriter builder, string tableName, Guid tableGuid,
             IEnumerable<SharedTableData.SharedTableEntry> entries)
         {
-            var className = Utility.SanitizeName(tableName, false, true);
+            var className = Utility.SanitizeName(tableName);
             if (className is null)
             {
                 return;
