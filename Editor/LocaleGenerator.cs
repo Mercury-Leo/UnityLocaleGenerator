@@ -15,9 +15,9 @@ namespace LocaleGenerator.Editor
 {
     public static class LocaleGenerator
     {
-        private const string ClassPrefix = "Locale";
         private const string TableGuidName = "TableGuid";
         private const string LocaleClassesName = "LocaleClasses.g.cs";
+        private static readonly LocaleSettings Settings = LocaleSettings.instance;
 
         [InitializeOnLoadMethod]
         private static void InitializeEditorEvents()
@@ -29,7 +29,7 @@ namespace LocaleGenerator.Editor
         [MenuItem("Tools/Leo's Tools/Generate Locale")]
         public static void GenerateLocaleClasses()
         {
-            var output = Path.Combine(LocaleSettings.instance.TargetFolder, LocaleClassesName);
+            var output = Path.Combine(Settings.TargetFolder, LocaleClassesName);
             GenerateLocaleClasses(output);
         }
 
@@ -93,7 +93,7 @@ namespace LocaleGenerator.Editor
                 return;
             }
 
-            builder.WriteLine($"public static class {ClassPrefix}{className}");
+            builder.WriteLine($"public static class {Settings.Prefix}{className}");
             builder.WriteLine("{");
 
             builder.Indent++;
