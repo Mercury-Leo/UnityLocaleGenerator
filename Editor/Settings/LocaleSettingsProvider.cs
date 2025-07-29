@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace LocaleGenerator.UnityLocaleGenerator.Editor.Settings
+namespace LocaleGenerator.Editor
 {
     internal sealed class LocaleSettingsProvider : SettingsProvider
     {
@@ -85,6 +85,26 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor.Settings
             row.Add(browseButton);
 
             rootElement.Add(row);
+            
+            var prefixField = Utility.CreateTextField("Style Prefix", settings.Prefix,
+                "The prefix assigned to each style class");
+
+            var field = prefixField.Q<TextField>();
+
+            field?.RegisterCallback<FocusOutEvent>(_ =>
+            {
+                var name = Utility.SanitizeName(field.value, true);
+
+                if (name is null)
+                {
+                    field.value = settings.Prefix;
+                    return;
+                }
+
+                settings.Prefix = name;
+            });
+
+            rootElement.Add(prefixField);
 
             var generateButton = new Button(LocaleGenerator.GenerateLocaleClasses)
             {
