@@ -17,7 +17,7 @@ namespace LocaleGenerator.Editor
     {
         private const string ClassPrefix = "Locale";
         private const string TableGuidName = "TableGuid";
-        private const string LocaleClassesName = "LocaleClasses.cs";
+        private const string LocaleClassesName = "LocaleClasses.g.cs";
 
         [InitializeOnLoadMethod]
         private static void InitializeEditorEvents()
