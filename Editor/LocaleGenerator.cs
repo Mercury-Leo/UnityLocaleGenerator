@@ -150,7 +150,7 @@ namespace LocaleGenerator.Editor
             builder.WriteLine("{");
             builder.Indent++;
             builder.WriteLine("var textWithArgs = text.Clone();");
-            builder.WriteLine("textWithArgs.Arguments = new object[] { args };");
+            builder.WriteLine("textWithArgs.Arguments = args;");
             builder.WriteLine("return textWithArgs;");
             builder.Indent--;
             builder.WriteLine("}");
