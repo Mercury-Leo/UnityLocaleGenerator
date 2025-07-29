@@ -86,8 +86,8 @@ namespace LocaleGenerator.Editor
 
             rootElement.Add(row);
             
-            var prefixField = Utility.CreateTextField("Style Prefix", settings.Prefix,
-                "The prefix assigned to each style class");
+            var prefixField = Utility.CreateTextField("Locale Class Prefix", settings.Prefix,
+                "The prefix assigned to each Locale class");
 
             var field = prefixField.Q<TextField>();
 
