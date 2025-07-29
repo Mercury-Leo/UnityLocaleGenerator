@@ -1,18 +1,17 @@
+#nullable enable
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using LocaleGenerator.UnityLocaleGenerator.Editor.Settings;
 using UnityEditor;
 using UnityEditor.Localization;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
 
-#nullable enable
-namespace LocaleGenerator.UnityLocaleGenerator.Editor
+namespace LocaleGenerator.Editor
 {
     public static class LocaleGenerator
     {
@@ -25,8 +24,6 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
         {
             LocalizationEditorSettings.EditorEvents.TableEntryAdded += OnTableModified;
             LocalizationEditorSettings.EditorEvents.TableEntryRemoved += OnTableModified;
-
-            LocaleSettings.instance.TargetChanged += OnTargetChanged;
         }
 
         [MenuItem("Tools/LocaleGenerator/Generate")]
@@ -34,27 +31,6 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
         {
             var output = Path.Combine(LocaleSettings.instance.TargetFolder, LocaleClassesName);
             GenerateLocaleClasses(output);
-        }
-
-        private static void OnTargetChanged(string oldPath, string newPath)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(oldPath))
-                {
-                    var oldFile = Path.Combine(oldPath, LocaleClassesName);
-                    if (File.Exists(oldFile))
-                    {
-                        AssetDatabase.DeleteAsset(oldFile);
-                    }
-                }
-
-                GenerateLocaleClasses(Path.Combine(newPath, LocaleClassesName));
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Failed to regenerate locale classes: {e}");
-            }
         }
 
         private static void OnTableModified(LocalizationTableCollection table, SharedTableData.SharedTableEntry entry)
@@ -109,7 +85,7 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
         private static void BuildClass(IndentedTextWriter builder, string tableName, Guid tableGuid,
             IEnumerable<SharedTableData.SharedTableEntry> entries)
         {
-            var className = SanitizeName(tableName);
+            var className = Utility.SanitizeName(tableName, false, true);
             if (className is null)
             {
                 return;
@@ -135,7 +111,7 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
 
         private static void BuildProperty(IndentedTextWriter builder, SharedTableData.SharedTableEntry entry)
         {
-            var keyName = SanitizeName(entry.Key);
+            var keyName = Utility.SanitizeName(entry.Key, false, true);
             if (keyName is null)
             {
                 return;
@@ -154,6 +130,8 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
             builder.WriteLine("public static class LocalizationExtensions");
             builder.WriteLine("{");
             builder.Indent++;
+
+            // Clone extension
             builder.WriteLine("[Pure]");
             builder.WriteLine("public static LocalizedString Clone(this LocalizedString localeString)");
             builder.WriteLine("{");
@@ -162,36 +140,44 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor
                 "return new LocalizedString(localeString.TableReference, localeString.TableEntryReference);");
             builder.Indent--;
             builder.WriteLine("}");
+
+            // With Arguments
+            builder.WriteLine("[Pure]");
+            builder.WriteLine(
+                "public static LocalizedString WithArguments(this LocalizedString text, params string[] args)");
+            builder.WriteLine("{");
+            builder.Indent++;
+            builder.WriteLine("var textWithArgs = text.Clone();");
+            builder.WriteLine("textWithArgs.Arguments = new object[] { args };");
+            builder.WriteLine("return textWithArgs;");
             builder.Indent--;
             builder.WriteLine("}");
-        }
 
-        private static string? SanitizeName(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return null;
-            }
+            // With Arguments
+            builder.WriteLine("[Pure]");
+            builder.WriteLine(
+                "public static LocalizedString WithArguments(this LocalizedString text, IDictionary<string, string> args");
+            builder.WriteLine("{");
+            builder.Indent++;
+            builder.WriteLine("var textWithArgs = text.Clone();");
+            builder.WriteLine("textWithArgs.Arguments = new object[] { args };");
+            builder.WriteLine("return textWithArgs;");
+            builder.Indent--;
+            builder.WriteLine("}");
 
-            var builder = new StringBuilder();
-            foreach (var c in name)
-            {
-                if (char.IsLetterOrDigit(c) || c == '_')
-                {
-                    builder.Append(c);
-                }
-                else
-                {
-                    builder.Append(string.Empty);
-                }
-            }
+            // With Arguments
+            builder.WriteLine("[Pure]");
+            builder.WriteLine(
+                "public static LocalizedString WithArguments(this LocalizedString text, , params (string Key, string Value)[] args)");
+            builder.WriteLine("{");
+            builder.Indent++;
+            builder.WriteLine("var dict = args.ToDictionary(pair => pair.Key, pair => pair.Value);");
+            builder.WriteLine("return text.WithArguments(dict);");
+            builder.Indent--;
+            builder.WriteLine("}");
 
-            if (char.IsDigit(builder[0]))
-            {
-                builder.Insert(0, '_');
-            }
-
-            return builder.ToString();
+            builder.Indent--;
+            builder.WriteLine("}");
         }
     }
 }

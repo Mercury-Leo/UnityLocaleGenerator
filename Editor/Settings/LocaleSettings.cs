@@ -1,19 +1,18 @@
-using System;
+#nullable enable
 using UnityEditor;
 using UnityEngine;
 
-#nullable enable
-namespace LocaleGenerator.UnityLocaleGenerator.Editor.Settings
+namespace LocaleGenerator.Editor
 {
     [FilePath("ProjectSettings/LocaleGenerator.asset", FilePathAttribute.Location.ProjectFolder)]
     public class LocaleSettings : ScriptableSingleton<LocaleSettings>
     {
         [SerializeField] private string? targetFolder;
+        [SerializeField] private string? prefix;
 
         private const string DefaultTargetFolder = "Assets";
-
-        public event Action<string, string>? TargetChanged; 
-
+        private const string DefaultPrefix = "Locale_";
+        
         public string TargetFolder
         {
             get => targetFolder ?? DefaultTargetFolder;
@@ -23,9 +22,18 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor.Settings
                 {
                     return;
                 }
-                
-                TargetChanged?.Invoke(TargetFolder, value);
+
                 targetFolder = value;
+                SaveDirty();
+            }
+        }
+        
+        public string Prefix
+        {
+            get => prefix ?? DefaultPrefix;
+            set
+            {
+                prefix = value;
                 SaveDirty();
             }
         }
@@ -40,6 +48,11 @@ namespace LocaleGenerator.UnityLocaleGenerator.Editor.Settings
             if (targetFolder is null)
             {
                 TargetFolder = DefaultTargetFolder;
+            }
+
+            if (prefix is null)
+            {
+                Prefix = DefaultPrefix;
             }
         }
 
