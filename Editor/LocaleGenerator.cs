@@ -80,6 +80,7 @@ namespace LocaleGenerator.Editor
             builder.WriteLine("using System;");
             builder.WriteLine("using UnityEngine.Localization;");
             builder.WriteLine("using System.Diagnostics.Contracts;");
+            builder.WriteLine("using System.Collections.Generic;");
         }
 
         private static void BuildClass(IndentedTextWriter builder, string tableName, Guid tableGuid,
@@ -156,7 +157,7 @@ namespace LocaleGenerator.Editor
             // With Arguments
             builder.WriteLine("[Pure]");
             builder.WriteLine(
-                "public static LocalizedString WithArguments(this LocalizedString text, IDictionary<string, string> args");
+                "public static LocalizedString WithArguments(this LocalizedString text, IDictionary<string, string> args)");
             builder.WriteLine("{");
             builder.Indent++;
             builder.WriteLine("var textWithArgs = text.Clone();");
@@ -168,7 +169,7 @@ namespace LocaleGenerator.Editor
             // With Arguments
             builder.WriteLine("[Pure]");
             builder.WriteLine(
-                "public static LocalizedString WithArguments(this LocalizedString text, , params (string Key, string Value)[] args)");
+                "public static LocalizedString WithArguments(this LocalizedString text, params (string Key, string Value)[] args)");
             builder.WriteLine("{");
             builder.Indent++;
             builder.WriteLine("var dict = args.ToDictionary(pair => pair.Key, pair => pair.Value);");
